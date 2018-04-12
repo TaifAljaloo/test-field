@@ -66,7 +66,6 @@ bool sec_tclm_get_nvm_all(struct sec_tclm_data *data)
 {
 	bool ret = true;
 	/* just don't read tune_fix_version, because this is write_only_value. */
-	data->tclm_read(data->client, SEC_TCLM_NVM_ALL_DATA);
 
 	data->cal_count = data->tclm_read(data->client, SEC_TCLM_NVM_OFFSET_CAL_COUNT);
 	data->cal_position = data->tclm_read(data->client, SEC_TCLM_NVM_OFFSET_CAL_POSITION);
@@ -82,11 +81,11 @@ bool sec_tclm_get_nvm_all(struct sec_tclm_data *data)
 		data->cal_pos_hist_cnt = data->tclm_read(data->client, SEC_TCLM_NVM_OFFSET_HISTORY_QUEUE_COUNT);
 		data->cal_pos_hist_lastp = data->tclm_read(data->client, SEC_TCLM_NVM_OFFSET_HISTORY_QUEUE_LASTP);
 		if ((data->cal_pos_hist_cnt > 0) && (data->cal_pos_hist_cnt <= CAL_HISTORY_QUEUE_MAX)
-			&& (data->cal_pos_hist_lastp < CAL_HISTORY_QUEUE_MAX))
+			&& (data->cal_pos_hist_lastp < CAL_HISTORY_QUEUE_MAX)) {
 			data->tclm_read(data->client, SEC_TCLM_NVM_OFFSET_HISTORY_QUEUE_SIZE);
-
-		else
+		} else {
 			data->cal_pos_hist_cnt = 0;	/* error case */
+		}
 
 		pr_info("%s %s: cal_count:%d, pos:%d(%4s), hist_count:%d, lastp:%d\n",
 			SECLOG, __func__, data->cal_count, data->cal_position,
@@ -100,6 +99,9 @@ void sec_tclm_position_history(struct sec_tclm_data *data)
 {
 	int i;
 	int now_lastp = data->cal_pos_hist_lastp;
+	u8 temp_calposition;
+	u8 temp_calcount;
+	char buffer[21];
 
 	if (data->cal_pos_hist_cnt > CAL_HISTORY_QUEUE_MAX
 		|| data->cal_pos_hist_lastp >= CAL_HISTORY_QUEUE_MAX) {
@@ -110,14 +112,17 @@ void sec_tclm_position_history(struct sec_tclm_data *data)
 
 	pr_info("%s %s: [Now] %4s%d\n", SECLOG, __func__,
 		data->tclm_string[data->cal_position].f_name, data->cal_count);
-	pr_info("%s %s: [Old] ", SECLOG, __func__);
 
 	for (i = 0; i < data->cal_pos_hist_cnt; i++) {
-		pr_cont("%c%d", data->tclm_string[data->cal_pos_hist_queue[2 * now_lastp]].s_name, data->cal_pos_hist_queue[2 * now_lastp + 1]);
+		temp_calposition = data->cal_pos_hist_queue[2 * now_lastp];
+		temp_calcount = data->cal_pos_hist_queue[2 * now_lastp + 1];
+
+		buffer[2 * i] = data->tclm_string[temp_calposition].s_name;
+		buffer[2 * i + 1] = (char)temp_calcount + '0';
 
 		if (i < CAL_HISTORY_QUEUE_SHORT_DISPLAY) {
-			data->cal_pos_hist_last3[2 * i] = data->tclm_string[data->cal_pos_hist_queue[2 * now_lastp]].s_name;
-			data->cal_pos_hist_last3[2 * i + 1] = data->cal_pos_hist_queue[2 * now_lastp + 1];
+			data->cal_pos_hist_last3[2 * i] = buffer[2 * i];
+			data->cal_pos_hist_last3[2 * i + 1] = buffer[2 * i + 1];
 		}
 
 		if (now_lastp <= 0)
@@ -125,12 +130,16 @@ void sec_tclm_position_history(struct sec_tclm_data *data)
 		else
 			now_lastp--;
 	}
-	pr_cont("\n");
+
+	/* end  */
+	buffer[2 * i] = 0;
 
 	if (i < CAL_HISTORY_QUEUE_SHORT_DISPLAY)
 		data->cal_pos_hist_last3[2 * i] = 0;
 	else
 		data->cal_pos_hist_last3[6] = 0;
+
+	pr_info("%s %s: [Old] %s\n", SECLOG, __func__, buffer);
 
 }
 
@@ -160,9 +169,9 @@ static bool sec_tclm_check_condition_valid(struct sec_tclm_data *data)
 		if ((data->root_of_calibration == CALPOSITION_TUNEUP)
 			|| (data->root_of_calibration == CALPOSITION_INITIAL)) {
 			return true;
-		} else if ((data->root_of_calibration == CALPOSITION_TESTMODE)
-			&& ((data->cal_position == CALPOSITION_TESTMODE)
-			|| (data->cal_position == CALPOSITION_TUNEUP))) {
+		} else if (!((data->cal_position == CALPOSITION_LCIA)
+			|| (data->cal_position == CALPOSITION_SVCCENTER))
+			&& (data->root_of_calibration == CALPOSITION_TESTMODE)) {
 			return true;
 		}
 		break;
@@ -190,18 +199,15 @@ bool sec_execute_tclm_package(struct sec_tclm_data *data, int factory_mode)
 	int ret, rc;
 	//u8 buff[4];
 
-	/* first read cal data for compare */
-	if (data->irq)
-		disable_irq(data->irq);
-
-	sec_tclm_get_nvm_all(data);
-
-
 	pr_err("%s %s: tclm_level:%02X, last pos:%d(%4s), now pos:%d(%4s), factory:%d\n",
-			SECLOG, __func__, data->tclm_level,
-			data->cal_position, data->tclm_string[data->cal_position].f_name,
-			data->root_of_calibration, data->tclm_string[data->root_of_calibration].f_name,
-			factory_mode);
+		SECLOG, __func__, data->tclm_level,
+		data->cal_position, data->tclm_string[data->cal_position].f_name,
+		data->root_of_calibration, data->tclm_string[data->root_of_calibration].f_name,
+		factory_mode);
+
+	/* first read cal data for compare */
+	disable_irq(data->irq);
+	sec_tclm_get_nvm_all(data);
 
 	/* if is run_for_calibration, don't check cal condition */
 	if (!factory_mode) {
@@ -213,8 +219,7 @@ bool sec_execute_tclm_package(struct sec_tclm_data *data, int factory_mode)
 		} else {
 			pr_err("%s %s: fail tclm condition,%d, root:%d\n",
 				SECLOG, __func__, rc, data->root_of_calibration);
-			if (data->irq)
-				enable_irq(data->irq);
+			enable_irq(data->irq);
 			return 0;
 		}
 
@@ -222,8 +227,7 @@ bool sec_execute_tclm_package(struct sec_tclm_data *data, int factory_mode)
 		ret = data->tclm_execute_force_calibration(data->client, TCLM_OFFSET_CAL_SEC);
 		if (ret < 0) {
 			pr_err("%s %s: fail to write OFFSET CAL SEC!\n", SECLOG, __func__);
-			if (data->irq)
-				enable_irq(data->irq);
+			enable_irq(data->irq);
 			return 0;
 		}
 	}
@@ -237,6 +241,7 @@ bool sec_execute_tclm_package(struct sec_tclm_data *data, int factory_mode)
 		/* save history queue */
 		data->tclm_write(data->client, SEC_TCLM_NVM_OFFSET_HISTORY_QUEUE_COUNT, data->cal_pos_hist_cnt);
 		data->tclm_write(data->client, SEC_TCLM_NVM_OFFSET_HISTORY_QUEUE_LASTP, data->cal_pos_hist_lastp);
+
 	} else if (data->root_of_calibration != data->cal_position) {
 		/* current data of cal count,position save cal history queue */
 
@@ -287,15 +292,12 @@ bool sec_execute_tclm_package(struct sec_tclm_data *data, int factory_mode)
 
 	/* saving tune_version */
 	rc = data->tclm_read(data->client, SEC_TCLM_NVM_OFFSET_IC_FIRMWARE_VER);
+	data->tune_fix_ver = rc;
 	data->tclm_write(data->client, SEC_TCLM_NVM_OFFSET_TUNE_VERSION, rc);
-	data->tune_fix_ver = data->tclm_read(data->client, SEC_TCLM_NVM_OFFSET_TUNE_VERSION);
-
-	data->tclm_write(data->client, SEC_TCLM_NVM_ALL_DATA, 0);
 
 	sec_tclm_position_history(data);
 
-	if (data->irq)
-		enable_irq(data->irq);
+	enable_irq(data->irq);
 	return 1;
 }
 
@@ -304,7 +306,6 @@ bool sec_tclm_check_cal_case(struct sec_tclm_data *data)
 	int restore_cal = 0;
 
 	if (data->cal_count == 0xFF) {
-		data->tclm_read(data->client, SEC_TCLM_NVM_ALL_DATA);
 		data->cal_count = data->tclm_read(data->client, SEC_TCLM_NVM_OFFSET_CAL_COUNT);
 		pr_info("%s %s: cal_count value [%d]\n", SECLOG, __func__, data->cal_count);
 
