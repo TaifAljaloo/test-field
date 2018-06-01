@@ -1444,8 +1444,9 @@ service iod /system/bin/iod
     oneshot
     disabled
 
-service vaultkeeperd /system/bin/vaultkeeperd
-    class core
+# Disable Samsung RMM State trigger
+# service vaultkeeperd /system/bin/vaultkeeperd
+#     class core
 
 # Barnswallow Daemon
 service bsd /system/bin/bsd
