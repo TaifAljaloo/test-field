@@ -103,7 +103,7 @@ do
             echo "----------------------------------------------"
             echo "Starting JACKPOTLTE kernel build..."
             SW_VARIANT=A530F
-            SW_DEFCON=exynos7885-jackpotlte_eur_defconfig
+            SW_DEFCON=jackpotlte_eur_open_defconfig
             SW_DTB="exynos7885-jackpotlte_eur_open_00 exynos7885-jackpotlte_eur_open_01 exynos7885-jackpotlte_eur_open_02 exynos7885-jackpotlte_eur_open_03 exynos7885-jackpotlte_eur_open_04 exynos7885-jackpotlte_eur_open_05 exynos7885-jackpotlte_eur_open_06 exynos7885-jackpotlte_eur_open_07"
             BUILD_ZIMAGE
             BUILD_DTB
