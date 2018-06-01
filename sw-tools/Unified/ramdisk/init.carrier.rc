@@ -1,0 +1,34 @@
+
+on post-fs-data
+
+# HD-DMB CAS Key Data
+    mkdir /data/.dmbca 0771
+    chown media system /data/.dmbca
+    chmod 0771 /data/.dmbca
+
+on boot
+
+# tdmb
+    chown system system /dev/tdmb
+    chmod 0660 /dev/tdmb
+
+service extSdUFS /system/bin/extSdUnionStorage
+    group system mount radio net_bt sdcard_rw shell media media_rw
+    class late_start
+    disabled
+
+service extSdUFSVold /system/bin/extSDCardServiceVold
+    class main
+    user system
+    group system mount radio net_bt sdcard_rw shell media media_rw
+
+on fs
+
+service dmb /system/bin/dmbserver
+    class main
+    user media
+    group system radio inet misc audio graphics net_bt net_bt_admin sdcard_rw sdcard_r shell media_rw dpgp
+
+# Create carrier folder for HiddenMenu
+on post-fs
+     mkdir /efs/carrier 0755 system system
