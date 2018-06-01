@@ -37,4 +37,11 @@ ro.bootimage.build.date=Thu Mar 29 21:26:43 KST 2018
 ro.bootimage.build.date.utc=1522326403
 ro.bootimage.build.fingerprint=samsung/j7duoltedd/j7duolte:8.0.0/R16NW/J720FDDU1ARCN:user/release-keys
 #Tweaks
+ro.config.tima=0
 ro.security.vaultkeeper.feature=0
+ro.frp.pst=
+ro.securestorage.support=false
+ro.config.dmverity=false
+ro.config.rkp=false
+ro.config.kap=false
+ro.config.tima=0
