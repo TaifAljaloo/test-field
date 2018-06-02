@@ -191,14 +191,6 @@ on boot
     chown system radio /dev/block/NAD_REFER
     chmod 0664 /dev/block/NAD_REFER
 
-    # DVFS & Hotplug
-    chown system system /sys/power/cpuhotplug/enabled
-    chown system system /sys/power/cpuhotplug/min_online_cpu
-    chown system system /sys/power/cpuhotplug/max_online_cpu
-    chmod 0664 /sys/power/cpuhotplug/enabled
-    chmod 0664 /sys/power/cpuhotplug/min_online_cpu
-    chmod 0664 /sys/power/cpuhotplug/max_online_cpu
-    
     # Permissions for input_booster
     chown system radio /sys/class/input_booster/level
     chown system radio /sys/class/input_booster/head
@@ -206,23 +198,44 @@ on boot
     chmod 0664 /sys/class/input_booster/level
     chmod 0664 /sys/class/input_booster/head
     chmod 0664 /sys/class/input_booster/tail
+
+    # Permissions for family_boost
+    chown system radio /sys/kernel/hmp/family_boost
+    chmod 0664 /sys/kernel/hmp/family_boost
     
     chown system radio /sys/devices/system/sec_os_ctrl/migrate_os
     chmod 0664 /sys/devices/system/sec_os_ctrl/migrate_os
 
-    # mif dvfs node
-    chown radio sys/devices/platform/17000010.devfreq_mif/devfreq/17000010.devfreq_mif/available_frequencies
-    chmod 0664 sys/devices/platform/17000010.devfreq_mif/devfreq/17000010.devfreq_mif/available_frequencies
-    chown radio sys/devices/platform/17000010.devfreq_mif/devfreq/17000010.devfreq_mif/min_freq
-    chmod 0664 sys/devices/platform/17000010.devfreq_mif/devfreq/17000010.devfreq_mif/min_freq
+    # SEC_PM sysfs
+    # RTC status
+    chown system system /sys/power/rtc_status
+    chmod 0664 /sys/power/rtc_status
+    chown system system /efs/FactoryApp/rtc_status
+    chmod 0664 /efs/FactoryApp/rtc_status
 
-    # GPU dvfs node
+    # DVFS & Hotplug
+    chown system system /sys/power/cpuhotplug/enabled
+    chown system system /sys/power/cpuhotplug/min_online_cpu
+    chown system system /sys/power/cpuhotplug/max_online_cpu
+    chmod 0664 /sys/power/cpuhotplug/enabled
+    chmod 0664 /sys/power/cpuhotplug/min_online_cpu
+    chmod 0664 /sys/power/cpuhotplug/max_online_cpu
+
+	# GPU dvfs node
     chown radio system /sys/devices/platform/11500000.mali/dvfs_table
     chmod 0664 /sys/devices/platform/11500000.mali/dvfs_table
     chown radio system /sys/devices/platform/11500000.mali/dvfs_min_lock
     chmod 0664 /sys/devices/platform/11500000.mali/dvfs_min_lock
     chown radio system /sys/devices/platform/11500000.mali/dvfs_max_lock
     chmod 0664 /sys/devices/platform/11500000.mali/dvfs_max_lock
+
+    # mif dvfs node
+    chown radio sys/devices/platform/17000010.devfreq_mif/devfreq/17000010.devfreq_mif/available_frequencies
+    chmod 0664 sys/devices/platform/17000010.devfreq_mif/devfreq/17000010.devfreq_mif/available_frequencies
+    chown radio sys/devices/platform/17000010.devfreq_mif/devfreq/17000010.devfreq_mif/max_freq
+    chmod 0664 sys/devices/platform/17000010.devfreq_mif/devfreq/17000010.devfreq_mif/max_freq
+    chown radio sys/devices/platform/17000010.devfreq_mif/devfreq/17000010.devfreq_mif/min_freq
+    chmod 0664 sys/devices/platform/17000010.devfreq_mif/devfreq/17000010.devfreq_mif/min_freq
 
     # Change permission for interactive governor
     chown system system /sys/devices/system/cpu/cpu0/cpufreq/interactive/timer_rate
