@@ -196,8 +196,16 @@ on boot
     chmod 0664 /sys/class/sec/sec_nad/nad_all
     chown system radio /sys/class/sec/sec_nad/nad_support
     chmod 0664 /sys/class/sec/sec_nad/nad_support
+    chown system radio /sys/class/sec/sec_nad/nad_api
+    chmod 0664 /sys/class/sec/sec_nad/nad_api
     chown system radio /dev/block/NAD_REFER
     chmod 0664 /dev/block/NAD_REFER
+    chown system radio /sys/class/sec/sec_nad_balancer/balancer
+    chmod 0664 /sys/class/sec/sec_nad_balancer/balancer
+    chown system radio /sys/class/sec/sec_nad_balancer/status
+    chmod 0664 /sys/class/sec/sec_nad_balancer/status
+    chown system radio /sys/class/sec/sec_nad_balancer/timeout
+    chmod 0664 /sys/class/sec/sec_nad_balancer/timeout
 
     # Permissions for input_booster
     chown system radio /sys/class/input_booster/level
@@ -303,6 +311,9 @@ on boot
     chown system system /sys/devices/system/cpu/cpu6/online
     chown system system /sys/devices/system/cpu/cpu7/online
 
+#dbmd
+    chmod 0660 /dev/dbmdx-1
+    chown system audio /dev/dbmdx-1
 
 # Sensors permissions
 # Accelerometer_sensor
@@ -327,6 +338,7 @@ on boot
     chown system radio /sys/class/sensors/proximity_sensor/barcode_emul_en
     chown system radio /sys/class/sensors/proximity_sensor/prox_offset_pass
     chown system radio /sys/class/sensors/proximity_sensor/prox_trim
+    chown system radio /sys/class/sensors/proximity_sensor/prox_trim_check
     chown system radio /sys/class/sensors/proximity_sensor/prox_probe
 # Light_sensor
     chown system radio /sys/class/sensors/light_sensor/lux
@@ -351,7 +363,6 @@ on boot
     chown system radio /sys/class/sensors/magnetic_sensor/raw_data
     chown system radio /sys/class/sensors/magnetic_sensor/vendor
     chown system radio /sys/class/sensors/magnetic_sensor/name
-    chown system radio /sys/class/sensors/magnetic_sensor/selftest
 # HRM_sensor
     chown system radio /sys/class/sensors/hrm_sensor/name
     chown system radio /sys/class/sensors/hrm_sensor/vendor
@@ -392,7 +403,9 @@ on boot
     chown system radio /sys/class/sensors/ssp_sensor/mcu_reset
     chown system radio /sys/class/sensors/ssp_sensor/mcu_update
     chown system radio /sys/class/sensors/ssp_sensor/mcu_sleep_test
+    chown system radio /sys/class/sensors/ssp_sensor/reset_info
     chown system radio /sys/class/sensors/ssp_sensor/ori_poll_delay
+    chown system radio /sys/class/sensors/ssp_sensor/sensor_dump
 # Sensorhub IIO
     chown system radio /sys/class/sensors/ssp_sensor/accel_poll_delay
     chown system radio /sys/class/sensors/ssp_sensor/rot_poll_delay
@@ -529,7 +542,6 @@ on fs
     chown system system /sys/class/mdnie/mdnie/night_mode
     chown system system /sys/class/mdnie/mdnie/whiteRGB
     chown system system /sys/class/mdnie/mdnie/light_notification
-    chown system system /sys/class/mdnie/mdnie/color_lens
 
 # Copy DRM Key
     copy /system/app/wv.keys /factory/wv.keys
@@ -552,8 +564,6 @@ on fs
 # If you want to test the flashlight in universal board which have the flash led h/w, Enable the below blocked lines.
     chmod 0660 /sys/class/camera/flash/rear_flash
     chown system camera /sys/class/camera/flash/rear_flash
-    chmod 0660 /sys/class/camera/flash/front_flash
-    chown system camera /sys/class/camera/flash/front_flash
 
 #load ecd firmware
     write /proc/ecd/load_firmware 1
