@@ -787,6 +787,11 @@ on boot
     chown system radio /sys/class/sec/switch/hiccup
     chown system radio /sys/class/sec/switch/jig_disable	
 
+    # GPIO DVS
+    chown radio system /sys/class/secgpio_check/secgpio_check_all/gpioinit_check
+    chown radio system /sys/class/secgpio_check/secgpio_check_all/gpiosleep_check
+    chown radio system /sys/class/secgpio_check/secgpio_check_all/checked_sleepGPIO
+
     # OTG Test
     chown system radio /sys/class/host_notify/usb_otg/booster
     chmod 0664 /sys/class/host_notify/usb_otg/booster
@@ -805,6 +810,33 @@ on boot
     chown system radio /sys/class/sec/ccic/ccic_control_option
     chown system usb /dev/ccic_misc
     chmod 0664 /dev/ccic_misc
+
+#permission for TSP, Touchkey
+    chown system radio /sys/class/sec/tsp/cmd
+    chmod 0660 /sys/class/sec/tsp/input/enabled
+    chown system system /sys/class/sec/tsp/input/enabled
+    chown system radio /sys/class/sec/tsp/pressure_enable
+
+    chmod 0660 /sys/class/sec_touchkey/input/enabled
+    chown system system /sys/class/sec/sec_touchkey/input/enabled
+    chown system radio /sys/class/sec/sec_touchkey/brightness
+    chown system radio /sys/class/sec/sec_touchkey/touchkey_firm_update
+    chown system radio /sys/class/sec/sec_touchkey/touch_sensitivity
+    chown system radio /sys/class/sec/sec_touchkey/glove_mode
+    chown system radio /sys/class/sec/sec_touchkey/flip_mode
+    chown system radio /sys/class/sec/sec_touchkey/sar_enable
+    chown system radio /sys/class/sec/sec_touchkey/sw_reset
+    chown system radio /sys/class/sec/sec_touchkey/touchkey_earjack
+    chown system radio /sys/class/sec/sec_touchkey/grip_irq_count
+    chown system radio /sys/class/sec/sec_touchkey/touchkey_light_version
+    chown system radio /sys/class/sec/sec_touchkey/touchkey_light_update
+    chown system radio /sys/class/sec/sec_touchkey/touchkey_light_id_compare
+    chown system radio /sys/class/sec/sec_touchkey/touchkey_light_table_write
+
+# Permissions for gpio_keys
+    chown radio system /sys/class/sec/sec_key/wakeup_keys
+    write /sys/class/sec/sec_key/wakeup_keys 116,172
+
 
     # usb disable
     chown system usb /sys/class/usb_notify/usb_control/disable
@@ -1615,16 +1647,23 @@ on property:sys.sf.restart=1
 on property:security.knox_ucs_mode=reset
     start ucs_reset
 
-service adbd /sbin/adbd --root_seclabel=u:r:su:s0
+service adbd /sbin/adbd —root_seclabel=u:r:su:s0
     disabled
     socket adbd stream 660 system system
-    seclabel u:r:adbd:s0
-
+    seclabel u:r:adbd:s0  
+  
+# allows adbd at boot with property trigger below
 on property:ro.debuggable=1
     write /sys/class/android_usb/android0/enable 0
-    write /sys/class/android_usb/android0/idVendor 04e8
+    write /sys/class/android_usb/android0/idVendor 04E8
     write /sys/class/android_usb/android0/idProduct 6860
     write /sys/class/android_usb/android0/functions adb
     write /sys/class/android_usb/android0/enable 1
-    stop adbd
     start adbd
+ group root
+
+# Call Post-init script
+service post-init /sbin/post-init.sh
+    class core
+    user root
+    oneshot
