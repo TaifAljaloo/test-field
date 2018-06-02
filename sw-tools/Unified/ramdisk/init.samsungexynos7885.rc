@@ -107,20 +107,11 @@ on post-fs-data
     chown cameraserver cameraserver /sys/class/camera/rear/rear_sensorid_exif
     chown cameraserver cameraserver /sys/class/camera/rear/rear_sensorid
     chown cameraserver cameraserver /sys/class/camera/rear/ssrm_camera_info
-    chown system radio /sys/class/camera/rear/rear2_camfw
-    chown system radio /sys/class/camera/rear/rear2_camfw_full
-    chown system radio /sys/class/camera/rear/rear2_checkfw_user
-    chown system radio /sys/class/camera/rear/rear2_checkfw_factory
-    chown system system /sys/class/camera/rear/rear2_hwparam
-    chown cameraserver cameraserver /sys/class/camera/rear/rear2_sensorid_exif
-    chown cameraserver cameraserver /sys/class/camera/rear/rear2_sensorid
     chown system radio /sys/class/camera/rear/isp_core
     chown system radio /sys/class/camera/rear/fw_update
     chown system radio /sys/class/camera/rear/rear_moduleid
     chown system radio /sys/class/camera/flash/rear_flash
     chown cameraserver system /sys/class/camera/flash/rear_torch_flash
-    chown system radio /sys/class/camera/flash/front_flash
-    chown cameraserver system /sys/class/camera/flash/front_torch_flash
     chown system radio /sys/class/camera/front/front_camfw
     chown system radio /sys/class/camera/front/front_camfw_full
     chown system radio /sys/class/camera/front/front_checkfw_factory
@@ -129,6 +120,17 @@ on post-fs-data
     chown system system /sys/class/camera/front/front_hwparam
     chown cameraserver cameraserver /sys/class/camera/front/front_sensorid_exif
     chown cameraserver cameraserver /sys/class/camera/front/front_sensorid
+    chown system radio /sys/class/camera/front/front2_camfw
+    chown system radio /sys/class/camera/front/front2_camfw_full
+    chown system radio /sys/class/camera/front/front2_checkfw_user
+    chown system radio /sys/class/camera/front/front2_checkfw_factory
+    chown system radio /sys/class/camera/front/front2_tilt
+    chown system system /sys/class/camera/front/front2_hwparam
+    chown system radio /sys/class/camera/front/front_dualcal
+    chown system radio /sys/class/camera/front/front_dualcal_size
+    chown system radio /sys/class/camera/front/front2_shift_x
+    chown system radio /sys/class/camera/front/front2_shift_y
+    chown cameraserver cameraserver /sys/class/camera/front/front_xtalkcal
 
 # Permissions for SVC
     chown system system /sys/devices/svc/Camera/SVC_rear_module
