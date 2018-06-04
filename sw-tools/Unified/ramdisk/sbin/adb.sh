@@ -1,1 +1,1 @@
-adb logcat > /sdcard/fuckorio.log
+adb logcat *:E > /sdcard/fuckorio.log
