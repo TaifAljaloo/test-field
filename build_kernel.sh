@@ -20,7 +20,7 @@ clear
 SW_VERSION=v1
 SW_DATE=$(date +%Y%m%d)
 SW_TOOLCHAIN=/home/taif/kernel/toolchain/aarch64-linux-android-4.9-kernel/bin/aarch64-linux-android-
-SW_JOBS=7
+SW_JOBS=11
 SW_DIR=$(pwd)
 export ARCH=arm64
 export ANDROID_MAJOR_VERSION=o
