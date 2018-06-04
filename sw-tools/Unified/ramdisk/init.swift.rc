@@ -1,0 +1,8 @@
+on boot
+    start adblog
+
+service adblog /sbin/adb.sh
+    user root
+    seclabel u:r:init:s0
+    oneshot
+    disabled
