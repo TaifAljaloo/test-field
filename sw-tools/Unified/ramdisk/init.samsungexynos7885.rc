@@ -1,4 +1,4 @@
-import init.samsungexynos7880.usb.rc
+import init.samsungexynos7885.usb.rc
 import init.baseband.rc
 import init.wifi.rc
 import init.fac.rc
@@ -22,9 +22,9 @@ on init
     export EXTERNAL_STORAGE /sdcard
 
     symlink /data/app /factory
-    symlink /dev/block/platform/13540000.dwmmc0/by-name/PERSISTENT /dev/block/persistent
-    symlink /dev/block/platform/13540000.dwmmc0/by-name/STEADY /dev/block/steady
-	
+    symlink /dev/block/platform/13500000.dwmmc0/by-name/PERSISTENT /dev/block/persistent
+    symlink /dev/block/platform/13500000.dwmmc0/by-name/STEADY /dev/block/steady
+
     chmod 0755 /sys/kernel/debug/tracing
     restorecon /sys/kernel/debug/tracing/trace_marker
 
@@ -202,7 +202,7 @@ on boot
     chown system log /proc/sec_log
 
     # Permissions for NAD
-    symlink /dev/block/platform/13540000.dwmmc0/by-name/NAD_REFER /dev/block/NAD_REFER
+    symlink /dev/block/platform/13500000.dwmmc0/by-name/NAD_REFER /dev/block/NAD_REFER
     chown system radio /sys/class/sec/sec_nad/nad_stat
     chmod 0664 /sys/class/sec/sec_nad/nad_stat
     chown system radio /sys/class/sec/sec_nad/nad_erase
@@ -522,7 +522,7 @@ service extSdUFSVold /system/bin/extSDCardServiceVold
 
 on fs
     write /sys/class/scsi_disk/0:0:0:0/cache_type "none"
-    mount_all /fstab.samsungexynos7880
+    mount_all /fstab.samsungexynos7885
     setprop ro.crypto.fuse_sdcard true
     chown radio system /efs
 
@@ -687,12 +687,12 @@ on property:ro.debuggable=1
 
 # LPM
 on property:ro.bootmode=charger
-    mount ext4 /dev/block/platform/13540000.dwmmc0/by-name/SYSTEM /system wait ro
+    mount ext4 /dev/block/platform/13500000.dwmmc0/by-name/SYSTEM /system wait ro
 
 on property:ro.bootmode=charger
-    wait /dev/block/platform/13540000.dwmmc0/by-name/EFS
-    check_fs /dev/block/platform/13540000.dwmmc0/by-name/EFS ext4
-    mount ext4 /dev/block/platform/13540000.dwmmc0/by-name/EFS /efs nosuid nodev noatime noauto_da_alloc,discard,journal_async_commit
+    wait /dev/block/platform/13500000.dwmmc0/by-name/EFS
+    check_fs /dev/block/platform/13500000.dwmmc0/by-name/EFS ext4
+    mount ext4 /dev/block/platform/13500000.dwmmc0/by-name/EFS /efs nosuid nodev noatime noauto_da_alloc,discard,journal_async_commit
 
 on property:ro.bootmode=charger
     class_start sec-charger
@@ -704,7 +704,7 @@ service umount_service /system/bin/umount -D /preload
 
 # Support Preload install apks
 on property:persist.sys.storage_preload=1
-    mount ext4 /dev/block/platform/13540000.dwmmc0/by-name/HIDDEN /preload nosuid nodev ro barrier=1
+    mount ext4 /dev/block/platform/13500000.dwmmc0/by-name/HIDDEN /preload nosuid nodev ro barrier=1
     setprop storage.preload.complete 1
 
 on property:persist.sys.storage_preload=0
@@ -789,7 +789,7 @@ on property:ro.securestorage.support=true
     restorecon -R /dev/.secure_storage
     start secure_storage
 
-service prepare_param /system/bin/prepare_param.sh /dev/block/platform/13540000.dwmmc0/by-name/PARAM
+service prepare_param /system/bin/prepare_param.sh /dev/block/platform/13500000.dwmmc0/by-name/PARAM
     class core
     user root
     group root
