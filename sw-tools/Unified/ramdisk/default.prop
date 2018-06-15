@@ -9,6 +9,7 @@ ro.adb.secure=1
 ro.allow.mock.location=0
 ro.debuggable=1
 persist.sys.usb.config=mtp,adb
+persist.sys.usb.config=none
 ro.zygote=zygote64_32
 ro.telephony.default_network=9
 ro.supportmodel.mptcp=1
